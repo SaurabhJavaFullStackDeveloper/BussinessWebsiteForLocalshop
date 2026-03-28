@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FreshMart — Local Grocery & Food Shop</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cream: #FAF7F2;
+      --white: #FFFFFF;
+      --ink: #1A1A18;
+      --ink-soft: #4A4A42;
+      --ink-muted: #9A9A8E;
+      --green: #2E6B3E;
+      --green-light: #4A9B5F;
+      --green-pale: #EAF3EC;
+      --amber: #D4720A;
+      --border: #E8E4DC;
+      --shadow: rgba(26,26,24,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--cream); }
+    ::-webkit-scrollbar-thumb { background: var(--green); border-radius: 3px; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 6vw;
+      height: 72px;
+      background: rgba(250,247,242,0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow 0.3s;
+    }
+    nav.scrolled { box-shadow: 0 4px 32px var(--shadow); }
+
+    .nav-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.6rem;
+      color: var(--green);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+    .nav-logo span { color: var(--amber); }
+
+    .nav-links {
+      display: flex; gap: 2.4rem; list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--ink-soft);
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -3px; left: 0; right: 0;
+      height: 2px; background: var(--green);
+      transform: scaleX(0); transition: transform 0.25s;
+    }
+    .nav-links a:hover { color: var(--green); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    .nav-cta {
+      background: var(--green); color: #fff;
+      padding: 10px 22px; border-radius: 100px;
+      font-size: 0.88rem; font-weight: 500;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .nav-cta:hover { background: var(--green-light); transform: translateY(-1px); }
+
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px;
+    }
+    .hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: var(--ink); border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    /* ── HERO ── */
+    #home {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 100px 6vw 60px;
+      gap: 4rem;
+    }
+
+    .hero-text { animation: fadeUp 0.8s ease both; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--green-pale);
+      color: var(--green);
+      padding: 6px 16px; border-radius: 100px;
+      font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 1.6rem;
+    }
+    .hero-badge::before {
+      content: ''; width: 8px; height: 8px;
+      background: var(--green); border-radius: 50%;
+      animation: pulse 1.8s ease infinite;
+    }
+
+    .hero-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.8rem, 5.5vw, 5rem);
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+      color: var(--ink);
+      margin-bottom: 1.4rem;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--green);
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--ink-soft);
+      line-height: 1.75;
+      max-width: 480px;
+      margin-bottom: 2.4rem;
+      font-weight: 300;
+    }
+
+    .hero-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+
+    .btn-primary {
+      background: var(--green); color: #fff;
+      padding: 14px 30px; border-radius: 100px;
+      font-size: 0.95rem; font-weight: 500;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 16px rgba(46,107,62,0.25);
+    }
+    .btn-primary:hover {
+      background: var(--green-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(46,107,62,0.3);
+    }
+
+    .btn-secondary {
+      color: var(--ink);
+      font-size: 0.95rem; font-weight: 500;
+      text-decoration: none;
+      display: flex; align-items: center; gap: 8px;
+      transition: gap 0.2s, color 0.2s;
+    }
+    .btn-secondary:hover { gap: 14px; color: var(--green); }
+    .btn-secondary .arrow {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+
+    .hero-stats {
+      display: flex; gap: 2.5rem; margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .stat-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem; color: var(--green);
+    }
+    .stat-label {
+      font-size: 0.8rem; color: var(--ink-muted);
+      font-weight: 500; margin-top: 2px;
+    }
+
+    /* Hero Image */
+    .hero-visual {
+      position: relative;
+      animation: fadeUp 0.8s 0.15s ease both;
+    }
+
+    .hero-img-wrap {
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      aspect-ratio: 4/5;
+      box-shadow: 0 24px 80px rgba(26,26,24,0.14);
+    }
+
+    .hero-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .hero-img-wrap:hover img { transform: scale(1.03); }
+
+    .hero-float-card {
+      position: absolute;
+      background: #fff;
+      border-radius: 16px;
+      padding: 14px 18px;
+      box-shadow: 0 8px 32px rgba(26,26,24,0.12);
+      display: flex; align-items: center; gap: 12px;
+      animation: float 3s ease-in-out infinite;
+    }
+    .hero-float-card.top {
+      top: -20px; right: -20px;
+    }
+    .hero-float-card.bottom {
+      bottom: 30px; left: -30px;
+      animation-delay: 1.2s;
+    }
+    .float-icon { font-size: 1.6rem; }
+    .float-text strong { display: block; font-size: 0.88rem; font-weight: 600; color: var(--ink); }
+    .float-text span { font-size: 0.75rem; color: var(--ink-muted); }
+
+    /* ── MARQUEE ── */
+    .marquee-strip {
+      background: var(--green);
+      padding: 14px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .marquee-inner {
+      display: inline-flex;
+      animation: marquee 22s linear infinite;
+    }
+    .marquee-item {
+      font-size: 0.85rem; font-weight: 500;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 0.05em;
+      padding: 0 2rem;
+    }
+    .marquee-dot {
+      color: var(--amber);
+      font-size: 1rem;
+    }
+
+    /* ── SECTION SHARED ── */
+    section { padding: 100px 6vw; }
+
+    .section-label {
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      line-height: 1.15;
+      letter-spacing: -0.8px;
+      color: var(--ink);
+      margin-bottom: 1.2rem;
+    }
+
+    .section-desc {
+      font-size: 1rem;
+      color: var(--ink-soft);
+      line-height: 1.75;
+      max-width: 520px;
+      font-weight: 300;
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      background: var(--white);
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 6rem; align-items: center;
+    }
+
+    .about-images {
+      position: relative;
+      height: 520px;
+    }
+
+    .about-img-main, .about-img-secondary {
+      position: absolute;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 16px 56px rgba(26,26,24,0.12);
+    }
+    .about-img-main {
+      width: 72%; height: 76%;
+      top: 0; left: 0;
+    }
+    .about-img-secondary {
+      width: 55%; height: 54%;
+      bottom: 0; right: 0;
+      border: 4px solid var(--white);
+    }
+    .about-img-main img,
+    .about-img-secondary img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .about-tag {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--green);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-align: center;
+      z-index: 2;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(46,107,62,0.3);
+    }
+    .about-tag span { display: block; font-family: 'DM Serif Display', serif; font-size: 1.4rem; }
+
+    .about-features {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1rem; margin-top: 2.4rem;
+    }
+    .feature-pill {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--green-pale);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 0.88rem; font-weight: 500;
+      color: var(--green);
+    }
+
+    /* ── PRODUCTS ── */
+    #products { background: var(--cream); }
+
+    .products-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 3rem; flex-wrap: wrap; gap: 1.5rem;
+    }
+
+    .filter-tabs {
+      display: flex; gap: 0.5rem; flex-wrap: wrap;
+    }
+    .filter-tab {
+      padding: 8px 18px;
+      border-radius: 100px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem; font-weight: 500;
+      color: var(--ink-soft);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-tab.active, .filter-tab:hover {
+      background: var(--green); color: #fff; border-color: var(--green);
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .product-card {
+      background: var(--white);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: transform 0.25s, box-shadow 0.25s;
+      cursor: pointer;
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(26,26,24,0.1);
+    }
+
+    .product-img {
+      width: 100%; aspect-ratio: 1;
+      overflow: hidden; position: relative;
+    }
+    .product-img img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s;
+    }
+    .product-card:hover .product-img img { transform: scale(1.06); }
+
+    .product-badge {
+      position: absolute; top: 12px; left: 12px;
+      background: var(--amber); color: #fff;
+      font-size: 0.7rem; font-weight: 600;
+      padding: 4px 10px; border-radius: 100px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+
+    .product-info { padding: 16px 18px 20px; }
+    .product-category {
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--ink-muted); margin-bottom: 4px;
+    }
+    .product-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem; color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .product-footer {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .product-price {
+      font-size: 1.05rem; font-weight: 600; color: var(--green);
+    }
+    .product-price .orig {
+      font-size: 0.8rem; color: var(--ink-muted);
+      text-decoration: line-through; margin-left: 6px; font-weight: 400;
+    }
+    .add-btn {
+      width: 34px; height: 34px;
+      background: var(--green-pale);
+      border: none; border-radius: 50%;
+      color: var(--green);
+      font-size: 1.2rem; font-weight: 300;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .add-btn:hover { background: var(--green); color: #fff; transform: scale(1.1); }
+
+    /* hidden products */
+    .product-card[data-hidden="true"] { display: none; }
+
+    /* ── TESTIMONIALS ── */
+    #testimonials {
+      background: var(--green);
+      color: #fff;
+    }
+    #testimonials .section-label { color: rgba(255,255,255,0.6); }
+    #testimonials .section-title { color: #fff; }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem; margin-top: 3rem;
+    }
+    .testi-card {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 28px;
+      transition: background 0.2s;
+    }
+    .testi-card:hover { background: rgba(255,255,255,0.15); }
+
+    .testi-stars { font-size: 0.9rem; margin-bottom: 1rem; color: #FFD166; }
+    .testi-text {
+      font-size: 0.95rem; line-height: 1.75;
+      color: rgba(255,255,255,0.85); margin-bottom: 1.4rem;
+      font-weight: 300;
+    }
+    .testi-author { display: flex; align-items: center; gap: 12px; }
+    .testi-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      overflow: hidden;
+    }
+    .testi-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .testi-name { font-weight: 600; font-size: 0.9rem; }
+    .testi-loc { font-size: 0.78rem; color: rgba(255,255,255,0.6); }
+
+    /* ── CONTACT ── */
+    #contact {
+      background: var(--white);
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 6rem; align-items: start;
+    }
+
+    .contact-info-cards { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
+
+    .contact-card {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 18px 20px;
+      background: var(--cream);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+    .contact-icon {
+      width: 42px; height: 42px;
+      background: var(--green-pale);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .contact-card-title { font-weight: 600; font-size: 0.88rem; margin-bottom: 3px; }
+    .contact-card-text { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.55; }
+
+    /* Contact Form */
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label {
+      font-size: 0.82rem; font-weight: 500; color: var(--ink-soft);
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      font-family: 'DM Sans', sans-serif;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: var(--cream);
+      font-size: 0.9rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      resize: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(46,107,62,0.1);
+    }
+    .form-group textarea { min-height: 110px; }
+
+    .form-submit {
+      background: var(--green);
+      color: #fff;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 100px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem; font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      align-self: flex-start;
+    }
+    .form-submit:hover { background: var(--green-light); transform: translateY(-2px); }
+
+    .form-success {
+      display: none;
+      background: var(--green-pale);
+      color: var(--green);
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-align: center;
+      border: 1px solid rgba(46,107,62,0.2);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      color: rgba(255,255,255,0.7);
+      padding: 60px 6vw 32px;
+    }
+    .footer-top {
+      display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr;
+      gap: 3rem; padding-bottom: 3rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .footer-brand .nav-logo { color: #fff; font-size: 1.8rem; }
+    .footer-brand p {
+      margin-top: 1rem; font-size: 0.88rem;
+      line-height: 1.7; max-width: 240px;
+    }
+    .footer-social { display: flex; gap: 10px; margin-top: 1.4rem; }
+    .social-btn {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      text-decoration: none; color: #fff;
+      transition: background 0.2s;
+    }
+    .social-btn:hover { background: var(--green); }
+
+    .footer-col h4 {
+      color: #fff; font-size: 0.85rem; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+    .footer-col ul a {
+      text-decoration: none; font-size: 0.88rem;
+      color: rgba(255,255,255,0.6);
+      transition: color 0.2s;
+    }
+    .footer-col ul a:hover { color: #fff; }
+
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 1.8rem; font-size: 0.82rem; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-bottom a { color: rgba(255,255,255,0.5); text-decoration: none; }
+    .footer-bottom a:hover { color: #fff; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 30px; right: 30px;
+      background: var(--ink); color: #fff;
+      padding: 14px 20px; border-radius: 12px;
+      font-size: 0.88rem; font-weight: 500;
+      transform: translateY(80px); opacity: 0;
+      transition: all 0.3s; z-index: 999;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ── MOBILE NAV ── */
+    .mobile-menu {
+      display: none;
+      position: fixed; top: 72px; left: 0; right: 0;
+      background: var(--cream);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 6vw;
+      z-index: 99;
+    }
+    .mobile-menu.open { display: flex; flex-direction: column; gap: 1.2rem; }
+    .mobile-menu a {
+      text-decoration: none; font-weight: 500;
+      color: var(--ink-soft); font-size: 1rem;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-10px); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(1.3); }
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      #home { grid-template-columns: 1fr; padding-top: 120px; text-align: center; }
+      .hero-text { order: 2; }
+      .hero-visual { order: 1; max-width: 380px; margin: 0 auto; }
+      .hero-actions { justify-content: center; }
+      .hero-stats { justify-content: center; }
+      .hero-desc { margin: 0 auto 2.4rem; }
+      #about { grid-template-columns: 1fr; gap: 3rem; }
+      #contact { grid-template-columns: 1fr; gap: 3rem; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .hero-float-card.top { top: -10px; right: -10px; }
+      .hero-float-card.bottom { bottom: 20px; left: -10px; }
+    }
+
+    @media (max-width: 600px) {
+      section { padding: 70px 5vw; }
+      .footer-top { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .about-features { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav id="navbar">
+  <a href="#home" class="nav-logo">Fresh<span>Mart</span></a>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#products">Products</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Visit Us</a>
+  <div class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#home" onclick="closeMobile()">Home</a>
+  <a href="#about" onclick="closeMobile()">About</a>
+  <a href="#products" onclick="closeMobile()">Products</a>
+  <a href="#contact" onclick="closeMobile()">Contact</a>
+</div>
+
+<!-- ── HERO ── -->
+<section id="home">
+  <div class="hero-text">
+    <div class="hero-badge">Now Open Daily · 7am – 10pm</div>
+    <h1 class="hero-title">
+      Fresh from the<br><em>farm</em> to your<br>table
+    </h1>
+    <p class="hero-desc">
+      Your neighbourhood grocery store for hand-picked organic produce, artisan goods, and everyday essentials — all under one roof.
+    </p>
+    <div class="hero-actions">
+      <a href="#products" class="btn-primary">Shop Products</a>
+      <a href="#about" class="btn-secondary">
+        Our Story
+        <span class="arrow">→</span>
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">500+</div>
+        <div class="stat-label">Products</div>
+      </div>
+      <div>
+        <div class="stat-num">12 yr</div>
+        <div class="stat-label">Serving Locals</div>
+      </div>
+      <div>
+        <div class="stat-num">4.9★</div>
+        <div class="stat-label">Customer Rating</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="hero-img-wrap">
+      <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=900&q=80" alt="Fresh Grocery Store" />
+    </div>
+    <div class="hero-float-card top">
+      <div class="float-icon">🥦</div>
+      <div class="float-text">
+        <strong>100% Organic</strong>
+        <span>Certified fresh produce</span>
+      </div>
+    </div>
+    <div class="hero-float-card bottom">
+      <div class="float-icon">🚚</div>
+      <div class="float-text">
+        <strong>Free Delivery</strong>
+        <span>Orders above ₹499</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MARQUEE ── -->
+<div class="marquee-strip">
+  <div class="marquee-inner" id="marqueeInner">
+    <span class="marquee-item">🌿 Fresh Organic Vegetables</span>
+    <span class="marquee-dot">·</span>
+    <span class="marquee-item">🍎 Seasonal Fruits</span>
+    <span class="marquee-dot">·</span>
+    <span class="marquee-item">🥛 Farm-Fresh Dairy</span>
+    <span class="marquee-dot">·</span>
+    <span class="marquee-item">🍞 Artisan Breads & Bakery</span>
+    <span class="marquee-dot">·</span>
+    <span class="marquee-item">🧴 Natural Pantry Essentials</span>
+    <span class="marquee-dot">·</span>
+    <span class="marquee-item">🛒 Daily Grocery Staples</span>
+    <span class="marquee-dot">·</span>
+    <span class="marquee-item">🌿 Fresh Organic Vegetables</span>
+    <span class="marquee-dot">·</span>
+    <span class="marquee-item">🍎 Seasonal Fruits</span>
+    <span class="marquee-dot">·</span>
+    <span class="marquee-item">🥛 Farm-Fresh Dairy</span>
+    <span class="marquee-dot">·</span>
+    <span class="marquee-item">🍞 Artisan Breads & Bakery</span>
+    <span class="marquee-dot">·</span>
+    <span class="marquee-item">🧴 Natural Pantry Essentials</span>
+    <span class="marquee-dot">·</span>
+    <span class="marquee-item">🛒 Daily Grocery Staples</span>
+    <span class="marquee-dot">·</span>
+  </div>
+</div>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="about-images reveal">
+    <div class="about-img-main">
+      <img src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=800&q=80" alt="Fresh Produce" />
+    </div>
+    <div class="about-img-secondary">
+      <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=600&q=80" alt="Farm Fresh" />
+    </div>
+    <div class="about-tag">
+      <span>2012</span>
+      Est. in Delhi
+    </div>
+  </div>
+
+  <div class="reveal">
+    <div class="section-label">Our Story</div>
+    <h2 class="section-title">A family shop built on trust & freshness</h2>
+    <p class="section-desc">
+      FreshMart started as a small corner store in Pitampura. Over 12 years, we've grown into a beloved neighbourhood grocery — but our values stay the same: source the best, price it fairly, and treat every customer like family.
+    </p>
+    <p class="section-desc" style="margin-top:1rem;">
+      We work directly with local farmers and trusted suppliers so you get produce that's picked at peak freshness — never sitting in a warehouse for weeks.
+    </p>
+    <div class="about-features">
+      <div class="feature-pill">✅ Locally Sourced</div>
+      <div class="feature-pill">🌱 Organic Range</div>
+      <div class="feature-pill">💳 Easy Payments</div>
+      <div class="feature-pill">🕖 Open 7 Days</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRODUCTS ── -->
+<section id="products">
+  <div class="products-header">
+    <div>
+      <div class="section-label">What We Offer</div>
+      <h2 class="section-title" style="margin-bottom:0">Our Products</h2>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all">All</button>
+      <button class="filter-tab" data-filter="vegetables">Vegetables</button>
+      <button class="filter-tab" data-filter="fruits">Fruits</button>
+      <button class="filter-tab" data-filter="dairy">Dairy</button>
+      <button class="filter-tab" data-filter="bakery">Bakery</button>
+    </div>
+  </div>
+
+  <div class="products-grid" id="productsGrid">
+
+    <div class="product-card reveal" data-category="vegetables">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500&q=80" alt="Tomatoes" loading="lazy" />
+        <span class="product-badge">Organic</span>
+      </div>
+      <div class="product-info">
+        <div class="product-category">Vegetables</div>
+        <div class="product-name">Farm Tomatoes</div>
+        <div class="product-footer">
+          <div class="product-price">₹40 <span class="orig">₹55</span></div>
+          <button class="add-btn" onclick="addToCart('Farm Tomatoes')">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal" data-category="fruits">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=500&q=80" alt="Apples" loading="lazy" />
+      </div>
+      <div class="product-info">
+        <div class="product-category">Fruits</div>
+        <div class="product-name">Kashmiri Apples</div>
+        <div class="product-footer">
+          <div class="product-price">₹160 <span class="orig">₹200</span></div>
+          <button class="add-btn" onclick="addToCart('Kashmiri Apples')">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal" data-category="dairy">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&q=80" alt="Milk" loading="lazy" />
+        <span class="product-badge">Fresh</span>
+      </div>
+      <div class="product-info">
+        <div class="product-category">Dairy</div>
+        <div class="product-name">Full Cream Milk</div>
+        <div class="product-footer">
+          <div class="product-price">₹28</div>
+          <button class="add-btn" onclick="addToCart('Full Cream Milk')">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal" data-category="bakery">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&q=80" alt="Bread" loading="lazy" />
+      </div>
+      <div class="product-info">
+        <div class="product-category">Bakery</div>
+        <div class="product-name">Sourdough Loaf</div>
+        <div class="product-footer">
+          <div class="product-price">₹120</div>
+          <button class="add-btn" onclick="addToCart('Sourdough Loaf')">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal" data-category="vegetables">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500&q=80" alt="Salad" loading="lazy" />
+        <span class="product-badge">Organic</span>
+      </div>
+      <div class="product-info">
+        <div class="product-category">Vegetables</div>
+        <div class="product-name">Mixed Salad Greens</div>
+        <div class="product-footer">
+          <div class="product-price">₹60</div>
+          <button class="add-btn" onclick="addToCart('Mixed Salad Greens')">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal" data-category="fruits">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=500&q=80" alt="Bananas" loading="lazy" />
+      </div>
+      <div class="product-info">
+        <div class="product-category">Fruits</div>
+        <div class="product-name">Robusta Bananas</div>
+        <div class="product-footer">
+          <div class="product-price">₹50 <span class="orig">₹65</span></div>
+          <button class="add-btn" onclick="addToCart('Robusta Bananas')">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal" data-category="dairy">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1628088062854-d1870b4553da?w=500&q=80" alt="Yogurt" loading="lazy" />
+      </div>
+      <div class="product-info">
+        <div class="product-category">Dairy</div>
+        <div class="product-name">Greek Yogurt</div>
+        <div class="product-footer">
+          <div class="product-price">₹85</div>
+          <button class="add-btn" onclick="addToCart('Greek Yogurt')">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal" data-category="bakery">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1558303781-16f0aef15e73?w=500&q=80" alt="Croissant" loading="lazy" />
+        <span class="product-badge">Popular</span>
+      </div>
+      <div class="product-info">
+        <div class="product-category">Bakery</div>
+        <div class="product-name">Butter Croissants</div>
+        <div class="product-footer">
+          <div class="product-price">₹45</div>
+          <button class="add-btn" onclick="addToCart('Butter Croissants')">+</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section id="testimonials">
+  <div style="max-width:520px">
+    <div class="section-label">Happy Customers</div>
+    <h2 class="section-title">Locals love FreshMart</h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testi-card reveal">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"The freshest vegetables I've ever bought. You can tell they actually care where their produce comes from. My family has been coming here every week for 5 years!"</p>
+      <div class="testi-author">
+        <div class="testi-avatar">👩</div>
+        <div>
+          <div class="testi-name">Priya Sharma</div>
+          <div class="testi-loc">Pitampura, Delhi</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"Honestly the best neighbourhood grocery in the area. Prices are fair, staff is helpful, and the bakery section is absolutely wonderful. The sourdough is unreal!"</p>
+      <div class="testi-author">
+        <div class="testi-avatar">👨</div>
+        <div>
+          <div class="testi-name">Rahul Verma</div>
+          <div class="testi-loc">Rohini, Delhi</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"Great selection of organic products and the staff always remembers my order. It feels like a real community shop, not just another supermarket. Highly recommend!"</p>
+      <div class="testi-author">
+        <div class="testi-avatar">👩</div>
+        <div>
+          <div class="testi-name">Anjali Kapoor</div>
+          <div class="testi-loc">Shalimar Bagh, Delhi</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="reveal">
+    <div class="section-label">Find Us</div>
+    <h2 class="section-title">Come visit or get in touch</h2>
+    <p class="section-desc">We'd love to hear from you — whether it's feedback, a bulk order, or just a hello.</p>
+
+    <div class="contact-info-cards">
+      <div class="contact-card">
+        <div class="contact-icon">📍</div>
+        <div>
+          <div class="contact-card-title">Our Location</div>
+          <div class="contact-card-text">Shop 14, Netaji Subhash Place Market,<br>Pitampura, Delhi – 110034</div>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">🕖</div>
+        <div>
+          <div class="contact-card-title">Opening Hours</div>
+          <div class="contact-card-text">Monday – Sunday: 7:00 AM – 10:00 PM<br>Public Holidays: 8:00 AM – 9:00 PM</div>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">📞</div>
+        <div>
+          <div class="contact-card-title">Phone & Email</div>
+          <div class="contact-card-text">+91 98110 12345<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f49c9198989bb4928691879c99958680da9d9a">[email&#160;protected]</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <div class="section-label" style="margin-top:0">Drop a Message</div>
+    <h3 style="font-family:'DM Serif Display',serif; font-size:1.5rem; margin-bottom:1.6rem; color:var(--ink);">We'll get back to you within 24 hrs</h3>
+
+    <form class="contact-form" id="contactForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" placeholder="Priya Sharma" required />
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" placeholder="+91 98100 00000" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" placeholder="you@example.com" required />
+      </div>
+      <div class="form-group">
+        <label>Subject</label>
+        <select>
+          <option>General Enquiry</option>
+          <option>Bulk / Wholesale Order</option>
+          <option>Product Feedback</option>
+          <option>Delivery Query</option>
+          <option>Collaboration</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea placeholder="Tell us how we can help…"></textarea>
+      </div>
+      <button type="submit" class="form-submit">Send Message →</button>
+      <div class="form-success" id="formSuccess">✅ Thanks! We'll be in touch soon.</div>
+    </form>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#home" class="nav-logo">Fresh<span style="color:var(--amber)">Mart</span></a>
+      <p>Your trusted local grocery store in Pitampura — fresh, fair, and always friendly.</p>
+      <div class="footer-social">
+        <a href="#" class="social-btn">📘</a>
+        <a href="#" class="social-btn">📸</a>
+        <a href="#" class="social-btn">🐦</a>
+        <a href="#" class="social-btn">▶️</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Categories</h4>
+      <ul>
+        <li><a href="#products">Fresh Vegetables</a></li>
+        <li><a href="#products">Seasonal Fruits</a></li>
+        <li><a href="#products">Dairy & Eggs</a></li>
+        <li><a href="#products">Bakery & Bread</a></li>
+        <li><a href="#products">Pantry Staples</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="tel:+919811012345">+91 98110 12345</a></li>
+        <li><a href="/cdn-cgi/l/email-protection#3c54595050537c5a4e594f54515d4e48125552"><span class="__cf_email__" data-cfemail="8ce4e9e0e0e3cceafee9ffe4e1edfef8a2e5e2">[email&#160;protected]</span></a></li>
+        <li><a href="#">Pitampura, Delhi</a></li>
+        <li><a href="#">Mon–Sun: 7am–10pm</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 FreshMart. All rights reserved.</span>
+    <span>Made with 🌿 in Delhi · <a href="#">Privacy</a> · <a href="#">Terms</a></span>
+  </div>
+</footer>
+
+<!-- ── CART TOAST ── -->
+<div class="toast" id="toast">🛒 Added to cart!</div>
+
+<!-- ── NOTIFICATION PANEL (Owner Dashboard) ── -->
+<div id="notifBell" onclick="toggleNotifPanel()" title="View Submissions">
+  <span id="bellIcon">🔔</span>
+  <span class="notif-count" id="notifCount" style="display:none">0</span>
+</div>
+
+<div id="notifPanel" class="notif-panel">
+  <div class="notif-panel-header">
+    <div>
+      <div class="notif-panel-title">📋 Customer Messages</div>
+      <div class="notif-panel-sub" id="notifSubtitle">No submissions yet</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="notif-clear-btn" onclick="clearAll()">Clear All</button>
+      <button class="notif-close-btn" onclick="toggleNotifPanel()">✕</button>
+    </div>
+  </div>
+  <div class="notif-list" id="notifList">
+    <div class="notif-empty" id="notifEmpty">
+      <div style="font-size:2.5rem;margin-bottom:12px">📭</div>
+      <div>No customer submissions yet.</div>
+      <div style="font-size:0.8rem;margin-top:6px;color:var(--ink-muted)">Messages will appear here when customers fill the contact form.</div>
+    </div>
+  </div>
+</div>
+<div class="notif-overlay" id="notifOverlay" onclick="toggleNotifPanel()"></div>
+
+<!-- ── SUCCESS MODAL ── -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-icon">✅</div>
+    <h3 class="modal-title">Message Sent!</h3>
+    <p class="modal-desc">Thank you, <strong id="modalName">there</strong>! We've received your message and will get back to you within 24 hours.</p>
+    <div class="modal-detail-row"><span>📧</span><span id="modalEmail">—</span></div>
+    <div class="modal-detail-row"><span>📋</span><span id="modalSubject">—</span></div>
+    <div class="modal-detail-row" id="modalPhoneRow"><span>📞</span><span id="modalPhone">—</span></div>
+    <button class="modal-close-btn" onclick="closeModal()">Got it, thanks! 👍</button>
+  </div>
+</div>
+
+<style>
+  /* ── BELL BUTTON ── */
+  #notifBell {
+    position: fixed; bottom: 30px; right: 30px;
+    width: 54px; height: 54px;
+    background: var(--green);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(46,107,62,0.4);
+    z-index: 300;
+    transition: transform 0.2s, box-shadow 0.2s;
+    user-select: none;
+  }
+  #notifBell:hover { transform: scale(1.08); box-shadow: 0 10px 30px rgba(46,107,62,0.5); }
+  #notifBell.ring { animation: bellRing 0.5s ease; }
+
+  .notif-count {
+    position: absolute; top: -4px; right: -4px;
+    background: #E53935; color: #fff;
+    font-size: 0.7rem; font-weight: 700;
+    min-width: 20px; height: 20px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 5px;
+    border: 2px solid #fff;
+    animation: popIn 0.3s ease;
+  }
+
+  /* ── NOTIFICATION PANEL ── */
+  .notif-panel {
+    position: fixed; right: -420px; top: 0; bottom: 0;
+    width: 400px; max-width: 95vw;
+    background: var(--white);
+    box-shadow: -8px 0 48px rgba(26,26,24,0.14);
+    z-index: 500;
+    display: flex; flex-direction: column;
+    transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+    overflow: hidden;
+  }
+  .notif-panel.open { right: 0; }
+
+  .notif-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(26,26,24,0.35);
+    z-index: 499;
+    backdrop-filter: blur(2px);
+  }
+  .notif-overlay.show { display: block; }
+
+  .notif-panel-header {
+    padding: 22px 20px 18px;
+    border-bottom: 1px solid var(--border);
+    background: var(--cream);
+    display: flex; justify-content: space-between; align-items: flex-start;
+    flex-shrink: 0;
+  }
+  .notif-panel-title { font-weight: 700; font-size: 1rem; color: var(--ink); }
+  .notif-panel-sub { font-size: 0.78rem; color: var(--ink-muted); margin-top: 3px; }
+
+  .notif-clear-btn {
+    background: transparent; border: 1px solid var(--border);
+    padding: 5px 10px; border-radius: 8px;
+    font-size: 0.75rem; font-weight: 500; color: var(--ink-soft);
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s;
+  }
+  .notif-clear-btn:hover { background: #fff0f0; color: #c0392b; border-color: #e0b4b4; }
+
+  .notif-close-btn {
+    background: transparent; border: none;
+    font-size: 1rem; cursor: pointer;
+    color: var(--ink-muted); padding: 4px 8px;
+    border-radius: 6px; transition: background 0.2s;
+  }
+  .notif-close-btn:hover { background: var(--border); color: var(--ink); }
+
+  .notif-list {
+    flex: 1; overflow-y: auto; padding: 16px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .notif-list::-webkit-scrollbar { width: 4px; }
+  .notif-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .notif-empty {
+    text-align: center; padding: 48px 20px;
+    color: var(--ink-muted); font-size: 0.9rem;
+    font-weight: 300;
+  }
+
+  /* ── SUBMISSION CARD ── */
+  .submission-card {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    position: relative;
+    animation: slideInCard 0.35s ease;
+    transition: box-shadow 0.2s;
+  }
+  .submission-card:hover { box-shadow: 0 4px 16px var(--shadow); }
+  .submission-card.unread { border-left: 3px solid var(--green); }
+
+  .submission-card-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .submission-name { font-weight: 700; font-size: 0.92rem; color: var(--ink); }
+  .submission-time { font-size: 0.72rem; color: var(--ink-muted); white-space: nowrap; margin-left: 8px; }
+
+  .submission-subject {
+    display: inline-block;
+    background: var(--green-pale); color: var(--green);
+    font-size: 0.72rem; font-weight: 600;
+    padding: 3px 10px; border-radius: 100px;
+    margin-bottom: 8px;
+    letter-spacing: 0.03em;
+  }
+
+  .submission-rows { display: flex; flex-direction: column; gap: 5px; }
+  .submission-row {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 0.82rem; color: var(--ink-soft);
+  }
+  .submission-row .s-icon { font-size: 0.85rem; flex-shrink: 0; margin-top: 1px; }
+  .submission-row .s-val { word-break: break-word; }
+
+  .submission-msg {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--white);
+    border-radius: 8px;
+    font-size: 0.82rem; color: var(--ink-soft);
+    line-height: 1.6;
+    font-style: italic;
+    border-left: 2px solid var(--green);
+  }
+
+  .submission-delete {
+    position: absolute; top: 12px; right: 12px;
+    background: transparent; border: none;
+    font-size: 0.8rem; color: var(--ink-muted);
+    cursor: pointer; padding: 4px 6px; border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .submission-delete:hover { background: #ffe0e0; color: #c0392b; }
+
+  /* ── SUCCESS MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(26,26,24,0.5);
+    z-index: 600;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.show { display: flex; }
+
+  .modal-box {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 40px 36px;
+    max-width: 420px; width: 90%;
+    text-align: center;
+    box-shadow: 0 24px 80px rgba(26,26,24,0.2);
+    animation: modalPop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .modal-icon {
+    font-size: 3.5rem; margin-bottom: 16px;
+    animation: bounceIn 0.5s 0.1s ease both;
+  }
+  .modal-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.7rem; color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .modal-desc {
+    font-size: 0.92rem; color: var(--ink-soft);
+    line-height: 1.65; margin-bottom: 20px; font-weight: 300;
+  }
+
+  .modal-detail-row {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--cream);
+    border-radius: 10px; padding: 10px 14px;
+    margin-bottom: 8px; text-align: left;
+    font-size: 0.85rem; color: var(--ink-soft);
+  }
+  .modal-detail-row span:first-child { font-size: 1rem; flex-shrink: 0; }
+
+  .modal-close-btn {
+    margin-top: 14px;
+    background: var(--green); color: #fff;
+    border: none; padding: 13px 30px;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    width: 100%;
+  }
+  .modal-close-btn:hover { background: var(--green-light); transform: translateY(-1px); }
+
+  /* ── EXTRA ANIMATIONS ── */
+  @keyframes bellRing {
+    0%,100% { transform: rotate(0); }
+    20%      { transform: rotate(-18deg); }
+    40%      { transform: rotate(16deg); }
+    60%      { transform: rotate(-12deg); }
+    80%      { transform: rotate(8deg); }
+  }
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  @keyframes slideInCard {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes modalPop {
+    from { opacity: 0; transform: scale(0.8) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes bounceIn {
+    from { opacity: 0; transform: scale(0.5); }
+    60%  { transform: scale(1.15); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* ── REAL-TIME FIELD VALIDATION ── */
+  .form-group input.valid,
+  .form-group textarea.valid,
+  .form-group select.valid {
+    border-color: var(--green);
+    background: #f6fbf7;
+  }
+  .form-group input.invalid,
+  .form-group textarea.invalid {
+    border-color: #e53935;
+    background: #fff8f8;
+  }
+  .field-hint {
+    font-size: 0.75rem; margin-top: 3px;
+    display: none;
+  }
+  .field-hint.error { color: #e53935; display: block; }
+  .field-hint.ok    { color: var(--green); display: block; }
+
+  /* Progress bar in submit btn */
+  .form-submit { position: relative; overflow: hidden; }
+  .form-submit .progress-fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: rgba(255,255,255,0.2);
+    width: 0; transition: width 1.4s linear;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  /* ── NAV SCROLL ── */
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 30);
+  });
+
+  /* ── HAMBURGER ── */
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+  });
+  function closeMobile() { mobileMenu.classList.remove('open'); }
+
+  /* ── PRODUCT FILTER ── */
+  const filterTabs = document.querySelectorAll('.filter-tab');
+  const productCards = document.querySelectorAll('.product-card');
+  filterTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      filterTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const filter = tab.dataset.filter;
+      productCards.forEach(card => {
+        const match = filter === 'all' || card.dataset.category === filter;
+        card.style.display = match ? '' : 'none';
+      });
+    });
+  });
+
+  /* ── CART TOAST ── */
+  const toast = document.getElementById('toast');
+  let toastTimer;
+  function addToCart(name) {
+    toast.textContent = '🛒 ' + name + ' added to cart!';
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+  }
+
+  /* ── SUBMISSIONS STORE ── */
+  let submissions = [];
+  let unreadCount = 0;
+
+  /* ── NOTIFICATION PANEL ── */
+  function toggleNotifPanel() {
+    const panel  = document.getElementById('notifPanel');
+    const overlay = document.getElementById('notifOverlay');
+    const isOpen = panel.classList.toggle('open');
+    overlay.classList.toggle('show', isOpen);
+    if (isOpen) {
+      // mark all as read
+      unreadCount = 0;
+      updateBell();
+      document.querySelectorAll('.submission-card.unread').forEach(c => c.classList.remove('unread'));
+    }
+  }
+
+  function updateBell() {
+    const badge = document.getElementById('notifCount');
+    const bell  = document.getElementById('notifBell');
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+      badge.style.display = 'flex';
+      bell.classList.add('ring');
+      setTimeout(() => bell.classList.remove('ring'), 600);
+    } else {
+      badge.style.display = 'none';
+    }
+    const sub = document.getElementById('notifSubtitle');
+    sub.textContent = submissions.length === 0
+      ? 'No submissions yet'
+      : submissions.length + ' submission' + (submissions.length > 1 ? 's' : '');
+  }
+
+  function addSubmissionCard(data) {
+    const empty = document.getElementById('notifEmpty');
+    if (empty) empty.style.display = 'none';
+
+    const id = 'sub-' + Date.now();
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) +
+                    ' · ' + now.toLocaleDateString([], { day: 'numeric', month: 'short' });
+
+    const card = document.createElement('div');
+    card.className = 'submission-card unread';
+    card.id = id;
+    card.innerHTML = `
+      <button class="submission-delete" onclick="deleteCard('${id}')" title="Remove">🗑</button>
+      <div class="submission-card-top">
+        <div class="submission-name">👤 ${escHtml(data.name)}</div>
+        <div class="submission-time">${timeStr}</div>
+      </div>
+      <div class="submission-subject">${escHtml(data.subject)}</div>
+      <div class="submission-rows">
+        <div class="submission-row"><span class="s-icon">📧</span><span class="s-val">${escHtml(data.email)}</span></div>
+        ${data.phone ? `<div class="submission-row"><span class="s-icon">📞</span><span class="s-val">${escHtml(data.phone)}</span></div>` : ''}
+      </div>
+      ${data.message ? `<div class="submission-msg">"${escHtml(data.message)}"</div>` : ''}
+    `;
+
+    const list = document.getElementById('notifList');
+    list.prepend(card);
+    submissions.unshift(data);
+    unreadCount++;
+    updateBell();
+  }
+
+  function deleteCard(id) {
+    const card = document.getElementById(id);
+    if (card) {
+      card.style.animation = 'none';
+      card.style.opacity = '0';
+      card.style.transform = 'translateX(20px)';
+      card.style.transition = 'all 0.25s';
+      setTimeout(() => {
+        card.remove();
+        if (document.querySelectorAll('.submission-card').length === 0) {
+          document.getElementById('notifEmpty').style.display = '';
+        }
+      }, 260);
+    }
+    const sub = document.getElementById('notifSubtitle');
+    submissions = submissions.filter((_, i) => i !== 0);
+    sub.textContent = submissions.length === 0 ? 'No submissions yet' :
+      submissions.length + ' submission' + (submissions.length > 1 ? 's' : '');
+  }
+
+  function clearAll() {
+    const list = document.getElementById('notifList');
+    document.querySelectorAll('.submission-card').forEach(c => c.remove());
+    submissions = [];
+    unreadCount = 0;
+    updateBell();
+    document.getElementById('notifEmpty').style.display = '';
+    document.getElementById('notifSubtitle').textContent = 'No submissions yet';
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ── SUCCESS MODAL ── */
+  function showModal(data) {
+    document.getElementById('modalName').textContent    = data.name;
+    document.getElementById('modalEmail').textContent   = data.email;
+    document.getElementById('modalSubject').textContent = data.subject;
+    if (data.phone) {
+      document.getElementById('modalPhone').textContent = data.phone;
+      document.getElementById('modalPhoneRow').style.display = 'flex';
+    } else {
+      document.getElementById('modalPhoneRow').style.display = 'none';
+    }
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('show');
+  }
+  document.getElementById('modalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  /* ── CONTACT FORM WITH VALIDATION ── */
+  const contactForm = document.getElementById('contactForm');
+
+  function validateField(input) {
+    const group = input.closest('.form-group');
+    let hint = group.querySelector('.field-hint');
+    if (!hint) {
+      hint = document.createElement('div');
+      hint.className = 'field-hint';
+      group.appendChild(hint);
+    }
+    const val = input.value.trim();
+
+    if (input.type === 'email') {
+      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+      input.classList.toggle('valid', ok && val.length > 0);
+      input.classList.toggle('invalid', !ok && val.length > 0);
+      hint.textContent = !ok && val.length > 0 ? '✗ Enter a valid email address' : ok ? '✓ Looks good!' : '';
+      hint.className   = 'field-hint ' + (!ok && val.length > 0 ? 'error' : ok ? 'ok' : '');
+      return ok;
+    }
+    if (input.type === 'tel' && val.length > 0) {
+      const ok = /^[+\d\s\-()]{8,}$/.test(val);
+      input.classList.toggle('valid', ok);
+      input.classList.toggle('invalid', !ok);
+      hint.textContent = !ok ? '✗ Enter a valid phone number' : '✓ Looks good!';
+      hint.className   = 'field-hint ' + (!ok ? 'error' : 'ok');
+      return true; // phone optional
+    }
+    if (input.required) {
+      const ok = val.length >= 2;
+      input.classList.toggle('valid', ok);
+      input.classList.toggle('invalid', !ok && val.length > 0);
+      hint.textContent = !ok && val.length > 0 ? '✗ Please enter at least 2 characters' : ok ? '✓ Looks good!' : '';
+      hint.className   = 'field-hint ' + (!ok && val.length > 0 ? 'error' : ok ? 'ok' : '');
+      return ok;
+    }
+    return true;
+  }
+
+  contactForm.querySelectorAll('input, textarea').forEach(function(field) {
+    field.addEventListener('blur', function() { validateField(field); });
+    field.addEventListener('input', function() {
+      if (field.classList.contains('invalid') || field.classList.contains('valid')) {
+        validateField(field);
+      }
+    });
+  });
+
+  contactForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    // Validate all required fields
+    var allValid = true;
+    contactForm.querySelectorAll('input[required], textarea').forEach(function(f) {
+      if (!validateField(f)) allValid = false;
+    });
+    if (!allValid) {
+      var firstErr = contactForm.querySelector('.invalid');
+      if (firstErr) firstErr.focus();
+      return;
+    }
+
+    var btn = contactForm.querySelector('.form-submit');
+
+    // Collect form data
+    var inputs = contactForm.querySelectorAll('input, textarea, select');
+    var formData = {
+      name:    inputs[0].value.trim(),
+      phone:   inputs[1].value.trim(),
+      email:   inputs[2].value.trim(),
+      subject: inputs[3].value.trim(),
+      message: inputs[4].value.trim()
+    };
+
+    // Animate button with progress bar
+    btn.disabled = true;
+    btn.innerHTML = 'Sending\u2026 <div class="progress-fill" id="progFill"></div>';
+    setTimeout(function() {
+      var fill = document.getElementById('progFill');
+      if (fill) fill.style.width = '100%';
+    }, 30);
+
+    setTimeout(function() {
+      contactForm.reset();
+      contactForm.querySelectorAll('input, textarea').forEach(function(f) {
+        f.classList.remove('valid', 'invalid');
+        var h = f.closest('.form-group').querySelector('.field-hint');
+        if (h) h.className = 'field-hint';
+      });
+      btn.innerHTML = 'Send Message \u2192';
+      btn.disabled  = false;
+
+      // Show modal to customer
+      showModal(formData);
+
+      // Add to owner notification panel
+      addSubmissionCard(formData);
+
+    }, 1500);
+  });
+
+  /* ── SCROLL REVEAL ── */
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const cards = entry.target.closest('.products-grid');
+        const delay = cards ? Array.from(entry.target.parentNode.children).indexOf(entry.target) * 60 : 0;
+        setTimeout(() => entry.target.classList.add('visible'), delay);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
